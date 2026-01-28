@@ -21,6 +21,8 @@ from django.urls import include
 
 
 
+
+# Base URL patterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/auth/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
@@ -30,4 +32,9 @@ urlpatterns = [
 
 urlpatterns += [
     path("api/users/", include("users.urls")),
+]
+
+# Posts URLs
+urlpatterns += [
+    path("api/posts/", include("posts.urls")),
 ]

@@ -28,3 +28,4 @@ class PostReadSerializer(serializers.ModelSerializer):
             "handle": obj.author.handle,
             "avatar_url": obj.author.avatar_url,
         }
+

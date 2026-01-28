@@ -3,6 +3,9 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.urls import include
 
+from users.views import jwt_exchange
+
+
 
 
 
@@ -11,6 +14,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/auth/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/auth/google/exchange/", jwt_exchange),
     path("accounts/", include("allauth.urls")),
 ]
 

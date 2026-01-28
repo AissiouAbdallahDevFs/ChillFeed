@@ -67,4 +67,26 @@ class DeletePostView(APIView):
         post.is_deleted = True
         post.save()
 
-        return Response(status=status.HTTP_204_NO_CONTENT message="Post deleted successfully.")
+        return Response(status=status.HTTP_204_NO_CONTENT ,message="Post deleted successfully.")
+    
+class EditPostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request, post_id: int):
+        post = get_object_or_404(Post, id=post_id, is_deleted=False)
+        if post.author != request.user:
+            return Response(
+                {"detail": "You do not have permission to edit this post."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = PostCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        post.text = serializer.validated_data["text"]
+        post.save()
+
+        return Response(
+            {"id": post.id, "created_at": post.created_at.isoformat(), "text": post.text , "message": "Post updated successfully."},
+            status=status.HTTP_200_OK,
+        )

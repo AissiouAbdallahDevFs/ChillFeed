@@ -44,3 +44,27 @@ class GetUserPostsView(APIView):
 
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data)
+    
+class GetAllPostsView(APIView):
+    def get(self, request):
+        posts = Post.objects.filter(
+            is_deleted=False,
+        ).select_related("author").order_by("-created_at")
+
+        serializer = PostReadSerializer(posts, many=True)
+        return Response(serializer.data)
+
+class DeletePostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, post_id: int):
+        post = get_object_or_404(Post, id=post_id, is_deleted=False)
+        if post.author != request.user:
+            return Response(
+                {"detail": "You do not have permission to delete this post."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        post.is_deleted = True
+        post.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT message="Post deleted successfully.")

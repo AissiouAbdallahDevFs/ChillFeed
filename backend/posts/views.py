@@ -22,7 +22,7 @@ class PostCreateView(APIView):
         )
 
         return Response(
-            {"id": post.id, "created_at": post.created_at.isoformat()},
+            {"id": post.id, "created_at": post.created_at.isoformat(),"Post": post.text},
             status=status.HTTP_201_CREATED,
         )
     
@@ -34,3 +34,14 @@ class PostDetailView(APIView):
             is_deleted=False,
         )
         return Response(PostReadSerializer(post).data)
+
+
+class GetUserPostsView(APIView):
+    def get(self, request, user_id: int):
+        posts = Post.objects.filter(
+            author_id=user_id,
+            is_deleted=False,
+        ).select_related("author").order_by("-created_at")
+
+        serializer = PostReadSerializer(posts, many=True)
+        return Response(serializer.data)

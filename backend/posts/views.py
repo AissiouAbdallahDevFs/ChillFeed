@@ -10,7 +10,6 @@ from django.shortcuts import get_object_or_404
 
 class PostCreateView(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request):
         serializer = PostCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

@@ -27,3 +27,8 @@ urlpatterns += [
 urlpatterns += [
     path("api/posts/", include("posts.urls")),
 ]
+
+# Social URLs
+urlpatterns += [
+    path("api/social/", include("social.urls")),
+]

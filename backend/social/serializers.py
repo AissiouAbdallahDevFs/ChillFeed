@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from users.models import User 
-from posts.models import Post
+from posts.models import Post 
 
 
 class FollowSerializer(serializers.Serializer):
@@ -15,6 +15,17 @@ class FollowSerializer(serializers.Serializer):
 
 
 class LikeSerializer(serializers.Serializer):
+    post_id = serializers.IntegerField()
+
+    def validate_post_id(self, value):
+        try:
+            post = Post.objects.get(id=value, is_deleted=False)
+        except Post.DoesNotExist:
+            raise serializers.ValidationError("Post not found.")
+        return post
+    
+
+class RepostSerializer(serializers.Serializer):
     post_id = serializers.IntegerField()
 
     def validate_post_id(self, value):

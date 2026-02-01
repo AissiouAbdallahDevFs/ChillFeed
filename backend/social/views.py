@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
-from .models import Follow , Like
-from .serializers import FollowSerializer , LikeSerializer
+from .models import Follow , Like , Repost
+from .serializers import FollowSerializer , LikeSerializer , RepostSerializer
 
 
 class FollowView(APIView):
@@ -76,3 +76,34 @@ class UnlikeView(APIView):
         Like.objects.filter(user=user, post=post).delete()
 
         return Response({"detail": "Unliked."}, status=status.HTTP_200_OK)
+    
+
+
+class RepostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = RepostSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        post = serializer.validated_data["post_id"]
+        user = request.user
+
+        Repost.objects.get_or_create(user=user, post=post)
+
+        return Response({"detail": "Reposted."}, status=status.HTTP_201_CREATED)
+
+
+class UnrepostView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = RepostSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        post = serializer.validated_data["post_id"]
+        user = request.user
+
+        Repost.objects.filter(user=user, post=post).delete()
+
+        return Response({"detail": "Unreposted."}, status=status.HTTP_200_OK)
